@@ -37,7 +37,6 @@ jobs:
 
       - name: Run pre-commit on all files
         run: pre-commit run --all-files --show-diff-on-failure
-        continue-on-error: true  # Don't fail CI on existing lint issues for now
 
   test:
     name: Test (Python ${{ matrix.python-version }})

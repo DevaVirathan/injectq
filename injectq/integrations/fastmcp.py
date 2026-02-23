@@ -114,7 +114,10 @@ if _HAS_FASTMCP:
             from injectq.integrations.fastmcp import InjectQMCPMiddleware
 
             container = InjectQ()
-            mcp = FastMCP("MyServer", middleware=[InjectQMCPMiddleware(container=container)])
+            mcp = FastMCP(
+                "MyServer",
+                middleware=[InjectQMCPMiddleware(container=container)],
+            )
             ```
         """
 
@@ -134,7 +137,7 @@ else:  # pragma: no cover - fallback when fastmcp is not installed
     class InjectQMCPMiddleware:  # type: ignore[no-redef]
         """Placeholder when fastmcp is not installed."""
 
-        def __init__(self, *, container: Any) -> None:
+        def __init__(self, *, container: Any) -> None:  # noqa: ARG002
             msg = (
                 "InjectQMCPMiddleware requires the 'fastmcp' package. Install with "
                 "'pip install injectq[fastmcp]' or 'pip install fastmcp'."
@@ -171,7 +174,7 @@ def setup_mcp(container: "InjectQ", mcp: Any) -> None:
             "setup_mcp requires the 'fastmcp' package. Install with "
             "'pip install injectq[fastmcp]' or 'pip install fastmcp'."
         )
-        _logger.error(msg)
+        _logger.exception(msg)
         raise RuntimeError(msg) from exc
 
     mcp.add_middleware(InjectQMCPMiddleware(container=container))
