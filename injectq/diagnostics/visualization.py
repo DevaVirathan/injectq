@@ -2,6 +2,7 @@
 
 import logging
 
+
 _logger = logging.getLogger("injectq.diagnostics")
 _logger.debug("visualization module initialized")
 import inspect
