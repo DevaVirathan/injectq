@@ -52,7 +52,7 @@ def get_container_mcp() -> "InjectQ":
         _logger.error(msg)
         raise InjectionError(msg)
     _logger.debug("MCP container retrieved from call context")
-    return container  # type: ignore[return-value]
+    return container  # type: ignore[no-any-return]
 
 
 def InjectMCP(interface: type[T]) -> T:  # noqa: N802
@@ -81,7 +81,7 @@ def InjectMCP(interface: type[T]) -> T:  # noqa: N802
             return await service.get_all_users()
         ```
     """
-    return get_container_mcp().get(interface)
+    return get_container_mcp().get(interface)  # type: ignore[no-any-return]
 
 
 # ---------------------------------------------------------------------------
