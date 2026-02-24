@@ -100,4 +100,3 @@ jobs:
 
       - name: Run mypy
         run: mypy injectq --ignore-missing-imports --no-error-summary
-        continue-on-error: true  # Don't fail CI on existing type issues for now
