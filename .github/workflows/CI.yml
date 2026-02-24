@@ -105,12 +105,13 @@ jobs:
   pr-summary:
     name: PR Summary
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && always()
+    if: ${{ github.event_name == 'pull_request' && !cancelled() }}
     needs: [lint, test, type-check]
     permissions:
       pull-requests: write
     steps:
       - name: Post PR Comment
+        if: always()
         uses: actions/github-script@v7
         with:
           script: |
