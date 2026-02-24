@@ -100,3 +100,43 @@ jobs:
 
       - name: Run mypy
         run: mypy injectq --ignore-missing-imports --no-error-summary
+
+  pr-summary:
+    name: PR Summary
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: [lint, test, type-check]
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Post PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const lintStatus = '${{ needs.lint.result }}';
+            const testStatus = '${{ needs.test.result }}';
+            const typeCheckStatus = '${{ needs.type-check.result }}';
+            
+            const statusIcon = (status) => status === 'success' ? '✓' : '✗';
+            const statusText = (status) => status === 'success' ? 'Passed' : 'Failed';
+            
+            const allPassed = lintStatus === 'success' && testStatus === 'success' && typeCheckStatus === 'success';
+            
+            const comment = `## CI Results Summary
+            
+            | Check | Status |
+            |-------|--------|
+            | Code Formatting & Linting | ${statusIcon(lintStatus)} ${statusText(lintStatus)} |
+            | Tests (Python 3.10-3.13) | ${statusIcon(testStatus)} ${statusText(testStatus)} |
+            | Type Checking | ${statusIcon(typeCheckStatus)} ${statusText(typeCheckStatus)} |
+            
+            **Overall Status:** ${allPassed ? 'All checks passed' : 'Some checks failed'}
+            
+            ${allPassed ? 'This PR is ready for review.' : 'Please fix the failing checks before merging.'}`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
